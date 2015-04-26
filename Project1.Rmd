@@ -1,0 +1,63 @@
+---
+title: "Regression models project"
+author: "Kirty Vedula"
+date: "04/26/2015"
+output: pdf_document
+---
+
+## Load libraries
+```{r calling_libraries}
+library(knitr)
+library(markdown)
+```
+## Loading data from mtcars dataset
+``` {r load_data}
+data(mtcars)
+str(mtcars)
+```
+## Setting up the variables and levels for Auto and Manual transmission
+```{r variables_and_levels}
+mtcars$cyl <- factor(mtcars$cyl)
+mtcars$vs <- factor(mtcars$vs)
+mtcars$gear <- factor(mtcars$gear)
+mtcars$carb <- factor(mtcars$carb)
+mtcars$am <- factor(mtcars$am)
+levels(mtcars$am) <- c("Auto", "Manual")
+```
+## Performing Student t-test and Wilcox test
+``` {r ttest_and_wilcoxtest}
+t.test(mpg ~ am, data = mtcars)
+wilcox.test(mpg ~ am, data = mtcars)
+```
+
+## Fitting a linear model with the mtcars dataset
+```{r model}
+model.all <- lm(mpg ~ ., data = mtcars)
+model <- step(model.all)
+summary(model)
+```
+## Fitting an ANOVA model
+```{r anova_model}
+model0 <- lm(mpg ~ am, data = mtcars)
+anova(model0, model)
+```
+## Calculating leverage 
+An observation that has an unusual X value—i.e., it is far from the mean of X—has leverage on (i.e., the potential to influence) the regression line 
+```{r leverage}
+leverage <- hatvalues(model)
+leverage[which(leverage > 0.5)]
+```
+
+## Calculating influential
+Only when an observation has high leverage and is an outlier in terms of Y-value will it strongly influence the regression line
+```{r influential}
+influential <- dfbetas(model)
+influential[which(abs(influential) > 1)]
+```
+## Quantifying the MPG difference between automatic and manual transmissions
+``` {r plot_mpg_am}
+plot(mpg ~ am, data = mtcars, main = "Mpg by transmission type", xlab = "Transmission type", ylab = "Miles per gallon")
+pairs(mtcars, panel = panel.smooth, main = "Pairs graph for MTCars")
+par(mfrow = c(2, 2))
+plot(model)
+```

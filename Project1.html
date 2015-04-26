@@ -1,0 +1,65 @@
+<h2>Load libraries</h2>
+
+<pre><code class="r calling_libraries">library(knitr)
+library(markdown)
+</code></pre>
+
+<h2>Loading data from mtcars dataset</h2>
+
+<pre><code class="r load_data">data(mtcars)
+str(mtcars)
+</code></pre>
+
+<h2>Setting up the variables and levels for Auto and Manual transmission</h2>
+
+<pre><code class="r variables_and_levels">mtcars$cyl &lt;- factor(mtcars$cyl)
+mtcars$vs &lt;- factor(mtcars$vs)
+mtcars$gear &lt;- factor(mtcars$gear)
+mtcars$carb &lt;- factor(mtcars$carb)
+mtcars$am &lt;- factor(mtcars$am)
+levels(mtcars$am) &lt;- c(&quot;Auto&quot;, &quot;Manual&quot;)
+</code></pre>
+
+<h2>Performing Student t-test and Wilcox test</h2>
+
+<pre><code class="r ttest_and_wilcoxtest">t.test(mpg ~ am, data = mtcars)
+wilcox.test(mpg ~ am, data = mtcars)
+</code></pre>
+
+<h2>Fitting a linear model with the mtcars dataset</h2>
+
+<pre><code class="r model">model.all &lt;- lm(mpg ~ ., data = mtcars)
+model &lt;- step(model.all)
+summary(model)
+</code></pre>
+
+<h2>Fitting an ANOVA model</h2>
+
+<pre><code class="r anova_model">model0 &lt;- lm(mpg ~ am, data = mtcars)
+anova(model0, model)
+</code></pre>
+
+<h2>Calculating leverage</h2>
+
+<p>An observation that has an unusual X value—i.e., it is far from the mean of X—has leverage on (i.e., the potential to influence) the regression line </p>
+
+<pre><code class="r leverage">leverage &lt;- hatvalues(model)
+leverage[which(leverage &gt; 0.5)]
+</code></pre>
+
+<h2>Calculating influential</h2>
+
+<p>Only when an observation has high leverage and is an outlier in terms of Y-value will it strongly influence the regression line</p>
+
+<pre><code class="r influential">influential &lt;- dfbetas(model)
+influential[which(abs(influential) &gt; 1)]
+</code></pre>
+
+<h2>Quantifying the MPG difference between automatic and manual transmissions</h2>
+
+<pre><code class="r plot_mpg_am">plot(mpg ~ am, data = mtcars, main = &quot;Mpg by transmission type&quot;, xlab = &quot;Transmission type&quot;, ylab = &quot;Miles per gallon&quot;)
+pairs(mtcars, panel = panel.smooth, main = &quot;Pairs graph for MTCars&quot;)
+par(mfrow = c(2, 2))
+plot(model)
+</code></pre>
+
